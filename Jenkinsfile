@@ -25,12 +25,10 @@ pipeline {
             steps {
                 script {
                     // Copiar el archivo de prueba al contenedor Docker con los permisos necesarios
-                    bat "docker cp ${workspace}/bin/${JMETER_TEST_FILE} jmeter-container:${JMETER_HOME}/bin/${JMETER_TEST_FILE}"
+                    bat "docker cp ${workspace}/${JMETER_TEST_FILE} jmeter-container:${JMETER_HOME}/bin/"
                 }
             }
         }
-
-
 
         stage('Ejecutar pruebas JMeter') {
             steps {
