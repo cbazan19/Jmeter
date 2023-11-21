@@ -3,7 +3,7 @@ pipeline {
     
     environment {
         JMETER_IMAGE = 'justb4/jmeter:latest'
-        JMETER_HOME = '/jmeter/apache-jmeter-5.6.2'
+        JMETER_HOME = 'C:/apache-jmeter-5.6.2'
         JMETER_TEST_FILE = 'Currencies.jmx'
         JMETER_RESULTS_FILE = 'report.jtl'
     }
