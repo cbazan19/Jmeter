@@ -11,7 +11,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 script {
-                    # Clonar el repositorio
+                    
                     checkout scm
                 }
             }
@@ -20,7 +20,7 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    # Copiar el archivo JMX al directorio bin de la imagen de Docker
+                    
                     dockerCommand = "docker run --rm -v ${env:WORKSPACE}:${env:WORKSPACE} -w ${env:WORKSPACE} ${JMETER_IMAGE} cp ${JMETER_SCRIPT} bin/"
                     Write-Output "Running command: $dockerCommand"
                     Invoke-Expression $dockerCommand
@@ -31,7 +31,7 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    # Ejecutar el contenedor de Docker con JMeter
+                    
                     dockerCommand = "docker run --rm -v ${env:WORKSPACE}:/jmeter -w /jmeter ${JMETER_IMAGE} -n -t bin/${JMETER_SCRIPT} -l ${JMETER_REPORT}"
                     Write-Output "Running command: $dockerCommand"
                     Invoke-Expression $dockerCommand
