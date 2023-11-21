@@ -24,11 +24,11 @@ pipeline {
         stage('Configurar ambiente JMeter') {
             steps {
                 script {
-                    // Obtener el SID del usuario
-                    def userSid = bat(script: 'whoami /user', returnStdout: true).trim().replaceAll("\\s", "")
+                    // Obtener el SID del usuario usando PowerShell
+                    def userSid = powershell(script: '([System.Security.Principal.WindowsIdentity]::GetCurrent()).User.Value', returnStdout: true).trim()
                     
                     // Ajustar los permisos del archivo usando el SID
-                    bat "icacls \"${workspace}/bin/${JMETER_TEST_FILE}\" /grant:r ${userSid}:R"
+                    bat "icacls \"${workspace}\\bin\\${JMETER_TEST_FILE}\" /grant ${userSid}:(R)"
                     
                     // Copiar el archivo de prueba al contenedor Docker
                     bat "docker cp ${workspace}/bin/${JMETER_TEST_FILE} jmeter-container:${JMETER_HOME}/bin/${JMETER_TEST_FILE}"
