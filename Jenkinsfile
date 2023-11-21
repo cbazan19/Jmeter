@@ -25,8 +25,7 @@ pipeline {
             steps {
                 script {
                     // Copiar el archivo de prueba al contenedor Docker con los permisos necesarios
-                    bat "docker cp ${workspace}/${JMETER_TEST_FILE} jmeter-container:${JMETER_HOME}/${JMETER_TEST_FILE}"
-                    bat "docker exec -u root jmeter-container cp ${JMETER_HOME}/${JMETER_TEST_FILE} /apache-jmeter-5.6.2/${JMETER_TEST_FILE}"
+                    bat "docker cp ${workspace}/${JMETER_TEST_FILE} jmeter-container:${JMETER_HOME}/bin/${JMETER_TEST_FILE}"
                 }
             }
         }
@@ -37,7 +36,7 @@ pipeline {
             steps {
                 script {
                     // Ejecutar las pruebas JMeter dentro del contenedor Docker
-                    bat "docker exec jmeter-container sh -c 'jmeter -jjmeter.save.saverservice.output_format=xml -n -t ${JMETER_HOME}/bin/${JMETER_TEST_FILE} -l ${JMETER_HOME}/bin/${JMETER_RESULTS_FILE}'"
+                    bat "docker exec -u root jmeter-container sh -c 'cd ${JMETER_HOME}/bin && ./jmeter -jjmeter.save.saverservice.output_format=xml -n -t ${JMETER_TEST_FILE} -l ${JMETER_RESULTS_FILE}'"
                 }
             }
         }
