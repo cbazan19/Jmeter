@@ -24,8 +24,9 @@ pipeline {
         stage('Configurar ambiente JMeter') {
             steps {
                 script {
-                    // Copiar el archivo de prueba al contenedor Docker
+                    // Copiar el archivo de prueba al contenedor Docker y otorgar permisos
                     bat "docker cp ${workspace}/${JMETER_TEST_FILE} jmeter-container:${JMETER_HOME}/${JMETER_TEST_FILE}"
+                    bat "docker exec jmeter-container sh -c 'chmod +rx ${JMETER_HOME}/${JMETER_TEST_FILE}'"
                 }
             }
         }
