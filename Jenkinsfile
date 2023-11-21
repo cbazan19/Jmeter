@@ -3,7 +3,7 @@ pipeline {
     
     environment {
         JMETER_IMAGE = 'justb4/jmeter:latest'
-        JMETER_HOME = 'C:/apache-jmeter-5.6.2'
+        JMETER_HOME = '/apache-jmeter-5.6.2' // Usamos una ruta de estilo Linux
         JMETER_TEST_FILE = 'Currencies.jmx'
         JMETER_RESULTS_FILE = 'report.jtl'
     }
@@ -16,7 +16,7 @@ pipeline {
                     checkout scm
                     
                     // Levantar el contenedor Docker de JMeter
-                    bat "docker run -d --name jmeter-container -v //c/Users/user/Desktop/apache-jmeter-5.6.2:${JMETER_HOME} ${JMETER_IMAGE}"
+                    bat "docker run -d --name jmeter-container -v ${workspace}:${JMETER_HOME} ${JMETER_IMAGE}"
                 }
             }
         }
