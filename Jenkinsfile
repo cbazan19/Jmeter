@@ -2,7 +2,7 @@ pipeline {
     agent any
     
     environment {
-        JMETER_IMAGE = 'cbazan19/jmeter:latest'  // Cambié la imagen según tu repositorio
+        JMETER_IMAGE = 'justb4/jmeter:latest' 
         JMETER_HOME = '/apache-jmeter-5.6.2' 
         JMETER_TEST_FILE = 'Currencies.jmx'
         JMETER_RESULTS_FILE = 'report.jtl'
