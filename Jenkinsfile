@@ -24,7 +24,7 @@ pipeline {
                 def workspaceUnix = env.WORKSPACE.replace("\\", "/")
 
                 // Copiar el archivo JMX al directorio bin de la imagen de Docker
-                sh "docker run --rm -v ${workspaceUnix}:${workspaceUnix} -w ${workspaceUnix} ${JMETER_IMAGE} cp ${JMETER_SCRIPT} bin/"
+                bat "docker run --rm -v ${workspaceUnix}:${workspaceUnix} -w ${workspaceUnix} ${JMETER_IMAGE} cp ${JMETER_SCRIPT} bin/"
             }
                 }
         }
