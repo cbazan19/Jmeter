@@ -2,7 +2,7 @@ pipeline {
     agent any
     
     environment {
-        JMETER_IMAGE = 'justb4/jmeter:latest'
+        JMETER_IMAGE = 'cbazan19/jmeter:latest'  // Cambié la imagen según tu repositorio
         JMETER_HOME = '/apache-jmeter-5.6.2' 
         JMETER_TEST_FILE = 'Currencies.jmx'
         JMETER_RESULTS_FILE = 'report.jtl'
@@ -16,7 +16,7 @@ pipeline {
                     checkout scm
                     
                     // Levantar el contenedor Docker de JMeter
-                    bat "docker run -d --name jmeter-container -v ${workspace}:${JMETER_HOME} ${JMETER_IMAGE}"
+                    bat "docker run -d --name jmeter-container -v ${workspace}:/apache-jmeter-5.6.2 ${JMETER_IMAGE}"
                 }
             }
         }
@@ -25,11 +25,10 @@ pipeline {
             steps {
                 script {
                     // Copiar el archivo de prueba al contenedor Docker con los permisos necesarios
-                    bat "docker cp ${workspace}/${JMETER_TEST_FILE} jmeter-container:${JMETER_HOME}/bin/"
+                    bat "docker cp ${workspace}/bin/${JMETER_TEST_FILE} jmeter-container:${JMETER_HOME}/bin/"
                 }
             }
         }
-
 
         stage('Ejecutar pruebas JMeter') {
             steps {
@@ -39,7 +38,6 @@ pipeline {
                 }
             }
         }
-
 
         stage('Guardar resultados') {
             steps {
