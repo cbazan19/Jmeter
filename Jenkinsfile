@@ -19,11 +19,14 @@ pipeline {
 
         stage('Build') {
             steps {
-                script {
-                    // Copiar el archivo JMX al directorio bin de la imagen de Docker
-                    bat "docker run --rm -v ${WORKSPACE}:${WORKSPACE} -w ${WORKSPACE} ${JMETER_IMAGE} cp ${JMETER_SCRIPT} bin/"
-                }
+            script {
+                // Convertir la ruta de Windows a formato Unix
+                def workspaceUnix = env.WORKSPACE.replace("\\", "/")
+
+                // Copiar el archivo JMX al directorio bin de la imagen de Docker
+                sh "docker run --rm -v ${workspaceUnix}:${workspaceUnix} -w ${workspaceUnix} ${JMETER_IMAGE} cp ${JMETER_SCRIPT} bin/"
             }
+                }
         }
 
         stage('Test') {
