@@ -2,7 +2,7 @@ pipeline {
     agent any
     
     environment {
-        JMETER_IMAGE = 'justb4/jmeter:latest' 
+        JMETER_IMAGE = 'justb4/jmeter:latest'
         JMETER_HOME = '/apache-jmeter-5.6.2' 
         JMETER_TEST_FILE = 'Currencies.jmx'
         JMETER_RESULTS_FILE = 'report.jtl'
@@ -24,8 +24,14 @@ pipeline {
         stage('Configurar ambiente JMeter') {
             steps {
                 script {
+                    // Ajustar los permisos del archivo localmente antes de copiarlo
+                    bat "chmod +r ${workspace}/bin/${JMETER_TEST_FILE}"
+                    
                     // Copiar el archivo de prueba al contenedor Docker con los permisos necesarios
                     bat "docker cp ${workspace}/bin/${JMETER_TEST_FILE} jmeter-container:${JMETER_HOME}/bin/"
+                    
+                    // Ajustar los permisos del archivo dentro del contenedor
+                    bat "docker exec jmeter-container chmod +r ${JMETER_HOME}/bin/${JMETER_TEST_FILE}"
                 }
             }
         }
