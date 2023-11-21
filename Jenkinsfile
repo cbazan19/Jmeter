@@ -16,7 +16,7 @@ pipeline {
                     checkout scm
                     
                     // Levantar el contenedor Docker de JMeter
-                    bat "docker run -d --name jmeter-container -v ${workspace}:/apache-jmeter-5.6.2 ${JMETER_IMAGE}"
+                    bat "docker run -d --name jmeter-container -v ${workspace}:${JMETER_HOME} ${JMETER_IMAGE}"
                 }
             }
         }
@@ -24,14 +24,11 @@ pipeline {
         stage('Configurar ambiente JMeter') {
             steps {
                 script {
-                    // Ajustar los permisos del archivo localmente antes de copiarlo
-                    bat "chmod +r ${workspace}/bin/${JMETER_TEST_FILE}"
+                    // Ajustar los permisos del archivo
+                    bat 'icacls "${workspace}/bin/${JMETER_TEST_FILE}" /grant:r %username%:R'
                     
-                    // Copiar el archivo de prueba al contenedor Docker con los permisos necesarios
-                    bat "docker cp ${workspace}/bin/${JMETER_TEST_FILE} jmeter-container:${JMETER_HOME}/bin/"
-                    
-                    // Ajustar los permisos del archivo dentro del contenedor
-                    bat "docker exec jmeter-container chmod +r ${JMETER_HOME}/bin/${JMETER_TEST_FILE}"
+                    // Copiar el archivo de prueba al contenedor Docker
+                    bat "docker cp ${workspace}/bin/${JMETER_TEST_FILE} jmeter-container:${JMETER_HOME}/bin/${JMETER_TEST_FILE}"
                 }
             }
         }
