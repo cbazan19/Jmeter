@@ -21,14 +21,16 @@ pipeline {
             }
         }
         
-    stage('Configurar ambiente JMeter') {
-        steps {
-            script {
-                // Copiar el archivo de prueba al contenedor Docker con los permisos necesarios
-                bat "docker exec -u root jmeter-container cp ${workspace}/${JMETER_TEST_FILE} ${JMETER_HOME}/${JMETER_TEST_FILE}"
+        stage('Configurar ambiente JMeter') {
+            steps {
+                script {
+                    // Copiar el archivo de prueba al contenedor Docker con los permisos necesarios
+                    bat "docker cp ${workspace}/${JMETER_TEST_FILE} jmeter-container:${JMETER_HOME}/${JMETER_TEST_FILE}"
+                    bat "docker exec -u root jmeter-container cp ${JMETER_HOME}/${JMETER_TEST_FILE} /apache-jmeter-5.6.2/${JMETER_TEST_FILE}"
+                }
             }
         }
-    }
+
 
 
         stage('Ejecutar pruebas JMeter') {
