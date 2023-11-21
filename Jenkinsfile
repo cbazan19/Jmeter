@@ -5,6 +5,7 @@ pipeline {
         JMETER_IMAGE = 'justb4/jmeter:5.5'
         JMETER_SCRIPT = 'Currencies.jmx'
         JMETER_REPORT = './bin/Run1.jtl'
+    
     }
 
     stages {
@@ -21,7 +22,7 @@ pipeline {
             steps {
                 script {
                     // Copiar el archivo JMX al directorio bin de la imagen de Docker
-                    sh "docker run --rm -v ${pwd()}:${pwd()} -w ${pwd()} ${JMETER_IMAGE} cp ${JMETER_SCRIPT} bin/"
+                    bat "docker run --rm -v ${pwd()}:${pwd()} -w ${pwd()} ${JMETER_IMAGE} cp ${JMETER_SCRIPT} bin/"
                 }
             }
         }
@@ -30,15 +31,15 @@ pipeline {
             steps {
                 script {
                     // Ejecutar el contenedor de Docker con JMeter
-                    sh "docker run --rm -v ${pwd()}:/jmeter -w /jmeter ${JMETER_IMAGE} -n -t bin/${JMETER_SCRIPT} -l ${JMETER_REPORT}"
+                    bat "docker run --rm -v ${pwd()}:/jmeter -w /jmeter ${JMETER_IMAGE} -n -t bin/${JMETER_SCRIPT} -l ${JMETER_REPORT}"
                 }
             }
         }
     }
 
-    /*post {
+    post {
         always {
             // Puedes realizar tareas adicionales después de la ejecución
         }
-    }*/
+    }
 }
