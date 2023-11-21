@@ -26,7 +26,7 @@ pipeline {
                 script {
                     // Copiar el archivo de prueba al contenedor Docker y otorgar permisos
                     bat "docker cp ${workspace}/${JMETER_TEST_FILE} jmeter-container:${JMETER_HOME}/${JMETER_TEST_FILE}"
-                    bat "docker exec jmeter-container sh -c 'chmod +rx ${JMETER_HOME}/${JMETER_TEST_FILE}'"
+                    bat "docker exec -u 0 jmeter-container sh -c 'chmod +rx ${JMETER_HOME}/${JMETER_TEST_FILE}'"
                 }
             }
         }
