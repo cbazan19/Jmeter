@@ -30,6 +30,7 @@ pipeline {
             }
         }
 
+
         stage('Ejecutar pruebas JMeter') {
             steps {
                 script {
@@ -38,6 +39,7 @@ pipeline {
                 }
             }
         }
+
 
         stage('Guardar resultados') {
             steps {
