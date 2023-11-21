@@ -3,7 +3,7 @@ pipeline {
     
     environment {
         JMETER_IMAGE = 'justb4/jmeter:latest'
-        JMETER_HOME = 'C:/apache-jmeter-5.5'
+        JMETER_HOME = 'C:/apache-jmeter-5.6.2'
         JMETER_TEST_FILE = 'Currencies.jmx'
         JMETER_RESULTS_FILE = 'report.jtl'
     }
@@ -34,7 +34,7 @@ pipeline {
             steps {
                 script {
                     // Ejecutar las pruebas JMeter dentro del contenedor Docker
-                    bat "docker exec jmeter-container bat -c 'jmeter -jjmeter.save.saverservice.output_format=xml -n -t ${JMETER_HOME}/bin/${JMETER_TEST_FILE} -l ${JMETER_HOME}/bin/${JMETER_RESULTS_FILE}'"
+                    bat "docker exec jmeter-container sh -c 'jmeter -jjmeter.save.saverservice.output_format=xml -n -t ${JMETER_HOME}/bin/${JMETER_TEST_FILE} -l ${JMETER_HOME}/bin/${JMETER_RESULTS_FILE}'"
                 }
             }
         }
