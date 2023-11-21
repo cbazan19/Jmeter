@@ -37,9 +37,4 @@ pipeline {
         }
     }
 
-    post {
-        always {
-            // Puedes realizar tareas adicionales después de la ejecución
-        }
-    }
 }
