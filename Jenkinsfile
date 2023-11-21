@@ -2,25 +2,48 @@ pipeline {
     agent any
     
     environment {
-        JMETER_HOME = tool 'JMeter' // Configura una herramienta de JMeter en la configuración de Jenkins
-        JMX_FILE = 'Currencies.jmx'
-        JTL_RESULT_FILE = 'resultado.jtl'
-        REPORT_OUTPUT_DIR = './ReporteCurrencies'
+        JMETER_IMAGE = 'justb4/jmeter:latest'
+        JMETER_HOME = '/jmeter/apache-jmeter-5.6.2'
+        JMETER_TEST_FILE = 'Currencies.jmx'
+        JMETER_RESULTS_FILE = 'report.jtl'
     }
 
     stages {
-        stage('Checkout') {
+        stage('Preparar entorno') {
             steps {
-                checkout scm
+                script {
+                    // Clonar el repositorio Git (puedes ajustar la URL del repositorio)
+                    checkout scm
+                    
+                    // Levantar el contenedor Docker de JMeter
+                    sh "docker run -d --name jmeter-container -v ${workspace}:${JMETER_HOME} ${JMETER_IMAGE}"
+                }
+            }
+        }
+        
+        stage('Configurar ambiente JMeter') {
+            steps {
+                script {
+                    // Copiar el archivo de prueba al contenedor Docker
+                    sh "docker cp ${workspace}/${JMETER_TEST_FILE} jmeter-container:${JMETER_HOME}/bin/${JMETER_TEST_FILE}"
+                }
             }
         }
 
-        stage('Run JMeter Test') {
+        stage('Ejecutar pruebas JMeter') {
             steps {
                 script {
-                    def jmeterCommand = "${JMETER_HOME}/bin/jmeter -n -t ${JMX_FILE} -l ${JTL_RESULT_FILE} -e -o ${REPORT_OUTPUT_DIR}"
+                    // Ejecutar las pruebas JMeter dentro del contenedor Docker
+                    sh "docker exec jmeter-container sh -c 'jmeter -jjmeter.save.saverservice.output_format=xml -n -t ${JMETER_HOME}/bin/${JMETER_TEST_FILE} -l ${JMETER_HOME}/bin/${JMETER_RESULTS_FILE}'"
+                }
+            }
+        }
 
-                    sh jmeterCommand
+        stage('Guardar resultados') {
+            steps {
+                script {
+                    // Copiar los resultados al directorio de trabajo de Jenkins
+                    sh "docker cp jmeter-container:${JMETER_HOME}/bin/${JMETER_RESULTS_FILE} ${JMETER_RESULTS_FILE}"
                 }
             }
         }
@@ -28,16 +51,11 @@ pipeline {
 
     post {
         always {
-            archiveArtifacts artifacts: '**/*.jtl'
-            junit '**/*.xml'
-        }
-        success {
-            echo 'La prueba de rendimiento se ejecutó exitosamente.'
-            step([$class: 'ArtifactArchiver', artifacts: 'ReporteCurrencies/**/*', allowEmptyArchive: true])
-            step([$class: 'PublishPerformanceReport', testResults: '**/target/*.jtl', relativeFailedThresholdNegative: 1.0, relativeFailedThresholdPositive: 1.0, relativeUnstableThresholdNegative: 1.0, relativeUnstableThresholdPositive: 1.0])
-        }
-        failure {
-            echo 'La prueba de rendimiento falló. Por favor, revisa los resultados y los informes generados.'
+            // Detener y eliminar el contenedor Docker después de ejecutar las pruebas
+            script {
+                sh "docker stop jmeter-container"
+                sh "docker rm jmeter-container"
+            }
         }
     }
 }
