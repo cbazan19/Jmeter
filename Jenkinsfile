@@ -16,7 +16,7 @@ pipeline {
                     checkout scm
                     
                     // Levantar el contenedor Docker de JMeter
-                    bat "docker run -d --name jmeter-container -v ${workspace}:${JMETER_HOME} ${JMETER_IMAGE}"
+                    bat "docker run -d --name jmeter-container -v //c/Users/user/Desktop/apache-jmeter-5.6.2:${JMETER_HOME} ${JMETER_IMAGE}"
                 }
             }
         }
