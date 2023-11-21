@@ -3,7 +3,7 @@ pipeline {
     
     environment {
         JMETER_IMAGE = 'justb4/jmeter:latest'
-        JMETER_HOME = '/apache-jmeter-5.6.2' // Usamos una ruta de estilo Linux
+        JMETER_HOME = '/apache-jmeter-5.6.2' 
         JMETER_TEST_FILE = 'Currencies.jmx'
         JMETER_RESULTS_FILE = 'report.jtl'
     }
@@ -25,10 +25,11 @@ pipeline {
             steps {
                 script {
                     // Copiar el archivo de prueba al contenedor Docker
-                    bat "docker cp ${workspace}/${JMETER_TEST_FILE} jmeter-container:${JMETER_HOME}/bin/${JMETER_TEST_FILE}"
+                    bat "docker cp ${workspace}/${JMETER_TEST_FILE} jmeter-container:${JMETER_HOME}/${JMETER_TEST_FILE}"
                 }
             }
         }
+
 
         stage('Ejecutar pruebas JMeter') {
             steps {
