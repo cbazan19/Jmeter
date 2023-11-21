@@ -16,7 +16,7 @@ pipeline {
                     checkout scm
                     
                     // Levantar el contenedor Docker de JMeter
-                    sh "docker run -d --name jmeter-container -v ${workspace}:${JMETER_HOME} ${JMETER_IMAGE}"
+                    bat "docker run -d --name jmeter-container -v ${workspace}:${JMETER_HOME} ${JMETER_IMAGE}"
                 }
             }
         }
@@ -25,7 +25,7 @@ pipeline {
             steps {
                 script {
                     // Copiar el archivo de prueba al contenedor Docker
-                    sh "docker cp ${workspace}/${JMETER_TEST_FILE} jmeter-container:${JMETER_HOME}/bin/${JMETER_TEST_FILE}"
+                    bat "docker cp ${workspace}/${JMETER_TEST_FILE} jmeter-container:${JMETER_HOME}/bin/${JMETER_TEST_FILE}"
                 }
             }
         }
@@ -34,7 +34,7 @@ pipeline {
             steps {
                 script {
                     // Ejecutar las pruebas JMeter dentro del contenedor Docker
-                    sh "docker exec jmeter-container sh -c 'jmeter -jjmeter.save.saverservice.output_format=xml -n -t ${JMETER_HOME}/bin/${JMETER_TEST_FILE} -l ${JMETER_HOME}/bin/${JMETER_RESULTS_FILE}'"
+                    bat "docker exec jmeter-container bat -c 'jmeter -jjmeter.save.saverservice.output_format=xml -n -t ${JMETER_HOME}/bin/${JMETER_TEST_FILE} -l ${JMETER_HOME}/bin/${JMETER_RESULTS_FILE}'"
                 }
             }
         }
@@ -43,7 +43,7 @@ pipeline {
             steps {
                 script {
                     // Copiar los resultados al directorio de trabajo de Jenkins
-                    sh "docker cp jmeter-container:${JMETER_HOME}/bin/${JMETER_RESULTS_FILE} ${JMETER_RESULTS_FILE}"
+                    bat "docker cp jmeter-container:${JMETER_HOME}/bin/${JMETER_RESULTS_FILE} ${JMETER_RESULTS_FILE}"
                 }
             }
         }
@@ -53,8 +53,8 @@ pipeline {
         always {
             // Detener y eliminar el contenedor Docker después de ejecutar las pruebas
             script {
-                sh "docker stop jmeter-container"
-                sh "docker rm jmeter-container"
+                bat "docker stop jmeter-container"
+                bat "docker rm jmeter-container"
             }
         }
     }
